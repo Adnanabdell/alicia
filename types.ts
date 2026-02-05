@@ -37,6 +37,7 @@ export interface AttendanceRecord {
   subjectId: string;
   date: string; // ISO Date
   status: 'present' | 'absent';
+  session: number; // Session number 1-8
   timestamp: number;
 }
 

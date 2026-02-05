@@ -83,6 +83,18 @@ class LocalDB {
   // --- ATTENDANCE ---
   async recordAttendance(record: Omit<AttendanceRecord, 'id' | 'timestamp'>): Promise<AttendanceRecord> {
     const attendance = this.get<AttendanceRecord[]>(KEYS.ATTENDANCE, []);
+    
+    // Check if attendance for this session already exists and remove it
+    const existingIndex = attendance.findIndex(
+      a => a.studentId === record.studentId && 
+           a.subjectId === record.subjectId && 
+           a.session === record.session
+    );
+    
+    if (existingIndex > -1) {
+      attendance.splice(existingIndex, 1);
+    }
+    
     const newRecord = { ...record, id: Math.random().toString(36).substr(2, 9), timestamp: Date.now() };
     attendance.push(newRecord);
     this.set(KEYS.ATTENDANCE, attendance);
