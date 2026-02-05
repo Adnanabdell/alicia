@@ -119,6 +119,12 @@ export const Attendance = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {students.map(student => {
+                // For teachers: only show students assigned to them
+                // For admins: show all students
+                if (user?.role === 'teacher' && student.teacherId !== user.uid) {
+                  return null;
+                }
+
                 const eligible = isEligible(student.id);
                 const sub = student.subscriptions.find(s => s.subjectId === selectedSubjectId);
                 

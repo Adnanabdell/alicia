@@ -17,7 +17,10 @@ export const Students = () => {
     }
     
     await db.addStudent({ 
-      ...formData, 
+      name: formData.name,
+      phone: formData.phone,
+      parentPhone: formData.parentPhone,
+      teacherId: formData.teacherId,
       subscriptions: [{
         subjectId: formData.subjectId,
         validUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days from now
