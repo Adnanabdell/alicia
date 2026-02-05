@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { db } from '../services/db';
-import { Check, X, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 export const Attendance = () => {
   const { subjects, students, user, t, refreshData } = useApp();
@@ -108,21 +108,27 @@ export const Attendance = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       {eligible ? (
-                        <div className="flex justify-end gap-2">
-                          <button 
-                            disabled={!!marking}
-                            onClick={() => handleAttendance(student.id, 'present')}
-                            className="bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-full transition"
-                          >
-                            <Check size={18} />
-                          </button>
-                          <button 
-                            disabled={!!marking}
-                            onClick={() => handleAttendance(student.id, 'absent')}
-                            className="bg-red-100 hover:bg-red-200 text-red-700 p-2 rounded-full transition"
-                          >
-                            <X size={18} />
-                          </button>
+                        <div className="flex justify-end gap-6 items-center">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name={`attendance-${student.id}`}
+                              disabled={!!marking}
+                              onChange={() => handleAttendance(student.id, 'present')}
+                              className="w-4 h-4 cursor-pointer"
+                            />
+                            <span className="text-green-700 font-medium">Present</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name={`attendance-${student.id}`}
+                              disabled={!!marking}
+                              onChange={() => handleAttendance(student.id, 'absent')}
+                              className="w-4 h-4 cursor-pointer"
+                            />
+                            <span className="text-red-700 font-medium">Absent</span>
+                          </label>
                         </div>
                       ) : (
                          <span className="text-gray-400 italic text-xs">Blocked</span>

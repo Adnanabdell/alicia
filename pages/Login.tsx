@@ -10,8 +10,15 @@ export const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(username, password);
-    if (!success) setError('Invalid credentials. Try: admin / admin');
+    try {
+      console.log("[v0] Login attempt with username:", username);
+      const success = await login(username, password);
+      console.log("[v0] Login result:", success);
+      if (!success) setError('Invalid credentials. Try: admin / admin');
+    } catch (err) {
+      console.error("[v0] Login error:", err);
+      setError('An error occurred during login. Check the console.');
+    }
   };
 
   return (
