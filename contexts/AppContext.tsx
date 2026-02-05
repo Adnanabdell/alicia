@@ -28,15 +28,22 @@ export const AppProvider = ({ children }: React.PropsWithChildren<{}>) => {
   const t = TRANSLATIONS[language];
 
   const refreshData = async () => {
-    const st = await db.getStudents();
-    const sb = await db.getSubjects();
-    const us = await db.getUsers();
-    setStudents(st);
-    setSubjects(sb);
-    setTeachers(us.filter(u => u.role === 'teacher'));
+    try {
+      console.log("[v0] Starting data refresh...");
+      const st = await db.getStudents();
+      const sb = await db.getSubjects();
+      const us = await db.getUsers();
+      console.log("[v0] Data loaded:", { students: st.length, subjects: sb.length, users: us.length });
+      setStudents(st);
+      setSubjects(sb);
+      setTeachers(us.filter(u => u.role === 'teacher'));
+    } catch (error) {
+      console.error("[v0] Error loading data:", error);
+    }
   };
 
   useEffect(() => {
+    console.log("[v0] AppProvider mounted, calling refreshData");
     refreshData();
   }, []);
 
