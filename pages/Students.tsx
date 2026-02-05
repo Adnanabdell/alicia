@@ -4,17 +4,29 @@ import { db } from '../services/db';
 import { Plus, User, Trash2, Phone, Search } from 'lucide-react';
 
 export const Students = () => {
-  const { students, t, refreshData } = useApp();
+  const { students, teachers, subjects, t, refreshData } = useApp();
   const [isAdding, setIsAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [formData, setFormData] = useState({ name: '', phone: '', parentPhone: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '', parentPhone: '', teacherId: '', subjectId: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await db.addStudent({ ...formData, subscriptions: [] });
+    if (!formData.name || !formData.phone || !formData.teacherId || !formData.subjectId) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    
+    await db.addStudent({ 
+      ...formData, 
+      subscriptions: [{
+        subjectId: formData.subjectId,
+        validUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days from now
+        sessionsRemaining: 12
+      }]
+    });
     await refreshData();
     setIsAdding(false);
-    setFormData({ name: '', phone: '', parentPhone: '' });
+    setFormData({ name: '', phone: '', parentPhone: '', teacherId: '', subjectId: '' });
   };
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
@@ -56,8 +68,8 @@ export const Students = () => {
 
       {isAdding && (
         <div className="bg-white p-6 rounded-2xl shadow-lg mb-8 border border-gray-100">
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-5">
-             <div className="md:col-span-3 text-lg font-semibold text-gray-700 mb-2">New Student Details</div>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+             <div className="md:col-span-2 text-lg font-semibold text-gray-700 mb-2">New Student Details</div>
             <input 
               placeholder={t.name} 
               className="p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none" 
@@ -77,7 +89,29 @@ export const Students = () => {
               value={formData.parentPhone}
               onChange={e => setFormData({...formData, parentPhone: e.target.value})}
             />
-            <div className="md:col-span-3 flex justify-end gap-3 mt-4">
+            <select 
+              className="p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none bg-white"
+              value={formData.teacherId}
+              onChange={e => setFormData({...formData, teacherId: e.target.value})}
+              required
+            >
+              <option value="">Select Teacher</option>
+              {teachers.map(teacher => (
+                <option key={teacher.uid} value={teacher.uid}>{teacher.name}</option>
+              ))}
+            </select>
+            <select 
+              className="p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none bg-white"
+              value={formData.subjectId}
+              onChange={e => setFormData({...formData, subjectId: e.target.value})}
+              required
+            >
+              <option value="">Select Subject</option>
+              {subjects.map(subject => (
+                <option key={subject.id} value={subject.id}>{subject.name}</option>
+              ))}
+            </select>
+            <div className="md:col-span-2 flex justify-end gap-3 mt-4">
               <button type="button" onClick={() => setIsAdding(false)} className="px-5 py-2.5 text-gray-500 hover:bg-gray-100 rounded-xl font-medium">{t.cancel}</button>
               <button type="submit" className="px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium shadow-md shadow-blue-200">{t.save}</button>
             </div>
