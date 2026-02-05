@@ -1,0 +1,5 @@
+{
+  "name": "Al-Madrasa Manager",
+  "description": "A simple, multilingual PWA for school management, attendance tracking, and payment processing.",
+  "requestFramePermissions": []
+}
