@@ -28,6 +28,7 @@ export interface Student {
   name: string;
   phone: string;
   parentPhone: string;
+  teacherId: string; // The teacher assigned to this student
   subscriptions: StudentSubscription[];
 }
 
